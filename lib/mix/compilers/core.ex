@@ -65,7 +65,7 @@ defmodule Mix.Compilers.Core do
   to be up to date and won't be (re-)compiled.
   """
   def compile(manifest, mappings, opts \\ [], callback) do
-    compile(manifest, mappings, :erl, opts, callback)
+    compile(manifest, mappings, :core, opts, callback)
   end
 
   defp compile(manifest, mappings, ext, opts, callback) do

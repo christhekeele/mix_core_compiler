@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Compile.Core do
   import Mix.Compilers.Core
 
   @recursive true
-  @manifest ".compile.erlang"
+  @manifest ".compile.core"
 
   @moduledoc """
   Compiles Core Erlang source files.
@@ -57,7 +57,7 @@ defmodule Mix.Tasks.Compile.Core do
     {opts, _, _} = OptionParser.parse(args, switches: [force: :boolean])
     project      = Mix.Project.config
     source_paths = project[:erlc_paths]
-    files        = Mix.Utils.extract_files(source_paths, [:erl])
+    files        = Mix.Utils.extract_files(source_paths, [:core])
     do_run(files, opts, project, source_paths)
   end
 
@@ -67,7 +67,7 @@ defmodule Mix.Tasks.Compile.Core do
     compile_path = to_erl_file Mix.Project.compile_path(project)
 
     erlc_options = project[:erlc_options] || []
-    erlc_options = erlc_options ++ [{:outdir, compile_path}, {:i, include_path}, :report]
+    erlc_options = erlc_options ++ [{:outdir, compile_path}, {:i, include_path}, :report, :from_core]
     erlc_options = Enum.map erlc_options, fn
       {kind, dir} when kind in [:i, :outdir] ->
         {kind, to_erl_file(dir)}
@@ -86,11 +86,11 @@ defmodule Mix.Tasks.Compile.Core do
       input, _output ->
         # We're purging the module because a previous compiler (e.g. Phoenix)
         # might have already loaded the previous version of it.
-        module = Path.basename(input, ".erl") |> String.to_atom
+        module = Path.basename(input, ".core") |> String.to_atom
         :code.purge(module)
         :code.delete(module)
 
-        file = to_erl_file(Path.rootname(input, ".erl"))
+        file = to_erl_file(Path.rootname(input, ".core"))
         :compile.file(file, erlc_options)
     end)
   end
