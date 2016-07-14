@@ -1,12 +1,12 @@
-defmodule Mix.Tasks.Compile.Erlang do
+defmodule Mix.Tasks.Compile.Core do
   use Mix.Task
-  import Mix.Compilers.Erlang
+  import Mix.Compilers.Core
 
   @recursive true
   @manifest ".compile.erlang"
 
   @moduledoc """
-  Compiles Erlang source files.
+  Compiles Core Erlang source files.
 
   When this task runs, it will first check the modification times of
   all files to be compiled and if they haven't been
@@ -37,12 +37,12 @@ defmodule Mix.Tasks.Compile.Erlang do
       Defaults to `"include"`.
 
     * `:erlc_options` - compilation options that apply to Erlang's compiler.
-      `:debug_info` is enabled by default.
+      `:debug_info` and `:from_core` are enabled by default.
 
       For a list of the many more available options,
       see [`:compile.file/2`](http://www.erlang.org/doc/man/compile.html#file-2).
 
-  For example, to configure the `erlc_options` for your Erlang project you
+  For example, to configure the `erlc_options` for your Core Erlang project you
   may run:
 
       erlc_options: [:debug_info, {:i, 'path/to/include'}]
@@ -82,7 +82,7 @@ defmodule Mix.Tasks.Compile.Erlang do
              |> sort_dependencies
              |> Enum.map(&annotate_target(&1, compile_path, opts[:force]))
 
-    Mix.Compilers.Erlang.compile(manifest(), tuples, opts, fn
+    Mix.Compilers.Core.compile(manifest(), tuples, opts, fn
       input, _output ->
         # We're purging the module because a previous compiler (e.g. Phoenix)
         # might have already loaded the previous version of it.
@@ -96,7 +96,7 @@ defmodule Mix.Tasks.Compile.Erlang do
   end
 
   @doc """
-  Returns Erlang manifests.
+  Returns Core Erlang manifests.
   """
   def manifests, do: [manifest()]
   defp manifest, do: Path.join(Mix.Project.manifest_path, @manifest)
@@ -105,7 +105,7 @@ defmodule Mix.Tasks.Compile.Erlang do
   Cleans up compilation artifacts.
   """
   def clean do
-    Mix.Compilers.Erlang.clean(manifest())
+    Mix.Compilers.Core.clean(manifest())
   end
 
   ## Internal helpers
